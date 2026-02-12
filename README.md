@@ -29,6 +29,7 @@ It was inspired by @hohjiada on Instagram and built using https://github.com/sau
 
 ## Getting Started
 
+### Option 1: Run with pnpm (Development)
 ```bash
 # Install dependencies
 pnpm install
@@ -39,6 +40,18 @@ pnpm run dev
 # Build for production
 pnpm run build
 ```
+
+### Option 2: Download Standalone HTML File (No Installation Required)
+
+Simply download the `Will you be my valentine.html` file and open it directly in your browser!
+
+**Steps:**
+1. Download `Will you be my valentine.html` from the project folder
+2. Save it to your computer
+3. Double-click the file to open it in your browser
+4. No installation, no server setup needed - just instant Valentine magic! ✨
+
+> **Note:** The HTML file includes all necessary CSS, JavaScript, and uses external GIFs, so make sure you have an internet connection for the animations to load.
 
 ## Deployment
 

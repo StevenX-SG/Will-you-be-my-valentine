@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my Valentine?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fce4ec 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 2rem;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Disclaimer */
+        .disclaimer-screen {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+
+        .disclaimer-screen h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .disclaimer-screen p {
+            font-size: 1.125rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .disclaimer-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-yes {
+            background: linear-gradient(to right, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-leave {
+            background: #9ca3af;
+            color: white;
+        }
+
+        .btn-leave:hover {
+            background: #6b7280;
+        }
+
+        /* Main Valentine Screen */
+        .valentine-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .bear-gif {
+            width: auto;
+            height: 200px;
+            border-radius: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .valentine-title {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #333;
+            margin: 1rem 0;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 2rem;
+            position: relative;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-yes-main {
+            background: linear-gradient(to right, #22c55e, #16a34a);
+            color: white;
+            padding: 1.25rem 2rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .btn-yes-main:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background: linear-gradient(to right, #ef4444, #dc2626);
+            color: white;
+            padding: 1.25rem 2rem;
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.1s;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .btn-no:hover:not(.dodging) {
+            transform: scale(1.05) translateY(-4px);
+        }
+
+        .btn-no.dodging {
+            position: fixed;
+            pointer-events: auto !important;
+        }
+
+        /* Dialog Box */
+        .dialog-box {
+            background: linear-gradient(to bottom right, #fdf2f8, #fff1f2);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 4px solid rgb(251, 207, 232);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            max-width: 32rem;
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+            margin-top: 2rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .dialog-box p {
+            font-size: 1.25rem;
+            color: #333;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .dialog-box .heart {
+            color: #ec2d8b;
+            font-size: 1.5rem;
+        }
+
+        /* Celebration Screen */
+        .celebration-gif {
+            width: auto;
+            height: 300px;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .celebration-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Rejected */
+        .rejected-gif {
+            width: auto;
+            height: 250px;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .breakup-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ef4444;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            color: #999;
+            text-align: right;
+            z-index: 9999;
+            pointer-events: auto;
+            user-select: none;
+        }
+
+        .footer a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .buttons-container {
+                gap: 1rem;
+            }
+
+            button {
+                padding: 1rem 2rem;
+            }
+
+            .bear-gif {
+                height: 150px;
+            }
+
+            .valentine-title {
+                font-size: 1.5rem;
+            }
+
+            .celebration-gif {
+                height: 200px;
+            }
+
+            .celebration-text {
+                font-size: 1.5rem;
+            }
+
+            .footer {
+                font-size: 0.65rem;
+                bottom: 0.5rem;
+                right: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Disclaimer Screen -->
+        <div class="disclaimer-screen" id="disclaimerScreen">
+            <h1>Disclaimer</h1>
+            <p>
+                This webpage is harmless.<br><br>
+                Someone sent you this because they wanted to be honest with you.<br><br>
+                If you're comfortable, click "Yes" to continue.
+            </p>
+            <div class="disclaimer-buttons">
+                <button class="btn-yes" onclick="continuePage()">Yes</button>
+                <button class="btn-leave" onclick="window.close()">Leave</button>
+            </div>
+        </div>
+
+        <!-- Valentine Screen -->
+        <div class="valentine-screen hidden" id="valentineScreen">
+            <img src="https://gifdb.com/images/high/cute-love-bear-roses-ou7zho5oosxnpo6k.gif" alt="Bear" class="bear-gif">
+            <h1 class="valentine-title">Will you be my Valentine?</h1>
+
+            <!-- Dialog Box (hidden until no is clicked twice) -->
+            <div class="dialog-box hidden" id="dialogBox">
+                <p>I once imagined us being together…<br>Maybe it was just a dream, and maybe it'll never happen.</p>
+                <p class="heart">Do I still have a chance? 💗</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons-container">
+                <button class="btn-yes-main" id="yesBtn" onclick="handleYes()" style="font-size: 1rem;">Yes</button>
+                <!-- Dodging No button (shown when dialog is hidden) -->
+                <button class="btn-no" id="noBtnDodging" onclick="handleNo()">No</button>
+                <!-- Simple No button (shown when dialog appears) -->
+                <button class="btn-no hidden" id="noBtnSimple" onclick="handleSimpleNo()" style="position: relative;">No</button>
+            </div>
+        </div>
+
+        <!-- Celebration Screen -->
+        <div class="hidden" id="celebrationScreen">
+            <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Celebration" class="celebration-gif">
+            <div class="celebration-text">WOOOOOO!!! I love you pookie!! ;))</div>
+        </div>
+
+        <!-- Rejected Screen -->
+        <div class="hidden" id="rejectedScreen">
+            <img src="https://media1.tenor.com/m/Vkui9SCHCFAAAAAd/meme-emotional.gif" alt="Rejected" class="rejected-gif">
+            <div class="breakup-text">Emotional Damage 💔</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 · <a href="https://github.com/StevenX-SG" target="_blank">github.com/StevenX-SG</a>
+    </div>
+
+    <script>
+        let noCount = 0;
+        let moveCount = 0;
+        let isDodging = false;
+        let lastDodgeTime = 0;
+        let mousePos = { x: 0, y: 0 };
+        let isMobile = false;
+        let showDialog = false;
+        const OFFSET = isMobile ? 120 : 100;
+
+        // Detect mobile
+        function detectMobile() {
+            const isTouchDevice = () => {
+                return (
+                    (typeof window !== "undefined" &&
+                        ("ontouchstart" in window ||
+                            (navigator.maxTouchPoints ? navigator.maxTouchPoints > 0 : false))) ||
+                    false
+                );
+            };
+            isMobile = isTouchDevice() || window.innerWidth < 768;
+        }
+
+        // Track mouse globally
+        function handleMouseMove(e) {
+            mousePos = { x: e.clientX, y: e.clientY };
+        }
+
+        // Track touch globally
+        function handleTouchMove(e) {
+            if (e.touches && e.touches.length > 0) {
+                mousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }
+
+        function continuePage() {
+            document.getElementById('disclaimerScreen').classList.add('hidden');
+            document.getElementById('valentineScreen').classList.remove('hidden');
+        }
+
+        function handleYes() {
+            stopDodging();
+            document.getElementById('valentineScreen').classList.add('hidden');
+            document.getElementById('celebrationScreen').classList.remove('hidden');
+        }
+
+        function handleNo() {
+            const noBtnDodging = document.getElementById('noBtnDodging');
+            
+            if (noCount === 0) {
+                // First click: "Are you sure?"
+                noCount = 1;
+                updateNoButton();
+            } else if (noCount === 1) {
+                // Second click: Start dodging
+                noCount = 2;
+                moveCount = 0;
+                isDodging = true;
+                updateNoButton();
+                noBtnDodging.classList.add('dodging');
+                startDodging();
+            } else if (noCount === 2 && moveCount >= 4) {
+                // After 4 dodges: "Pretty please" (no dialog yet, dialog appears after 5 more dodges)
+                noCount = 3;
+                moveCount = 0;
+                updateNoButton();
+                startDodging(); // Continue dodging for state 3
+            } else if (noCount === 3 && moveCount >= 5) {
+                // After 5 more dodges in state 3: Show dialog and switch buttons
+                showDialog = true;
+                switchToSimpleButton();
+            }
+        }
+
+        function handleSimpleNo() {
+            // When dialog is showing and user clicks No
+            stopDodging();
+            document.getElementById('valentineScreen').classList.add('hidden');
+            document.getElementById('rejectedScreen').classList.remove('hidden');
+        }
+
+        function switchToSimpleButton() {
+            // Hide dodging button, show simple No button
+            document.getElementById('noBtnDodging').classList.add('hidden');
+            document.getElementById('noBtnSimple').classList.remove('hidden');
+            
+            // Show dialog
+            document.getElementById('dialogBox').classList.remove('hidden');
+            
+            // Reset Yes button size
+            const yesBtn = document.getElementById('yesBtn');
+            yesBtn.style.fontSize = '1rem';
+        }
+
+        function updateNoButton() {
+            const noBtnDodging = document.getElementById('noBtnDodging');
+            const texts = ['No', 'Are you sure?', 'What if I asked really nicely?', 'Pretty please'];
+            noBtnDodging.textContent = texts[noCount] || texts[3];
+            
+            // Update yes button size
+            const yesBtn = document.getElementById('yesBtn');
+            const size = Math.max(16, noCount * 15 + 16);
+            yesBtn.style.fontSize = size + 'px';
+        }
+
+        function startDodging() {
+            detectMobile();
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('touchmove', handleTouchMove, { passive: true });
+            // Start the dodging loop
+            dodgingLoop();
+        }
+
+        function stopDodging() {
+            isDodging = false;
+            const noBtnDodging = document.getElementById('noBtnDodging');
+            noBtnDodging.classList.remove('dodging');
+            noBtnDodging.style.position = 'relative';
+            noBtnDodging.style.left = 'auto';
+            noBtnDodging.style.top = 'auto';
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('touchmove', handleTouchMove);
+        }
+
+        function dodgingLoop() {
+            if (!isDodging || noCount < 2) return;
+            
+            const noBtnDodging = document.getElementById('noBtnDodging');
+            const valentineScreen = document.getElementById('valentineScreen');
+
+            // Check if we should stop
+            if (noCount === 2 && moveCount >= 4) {
+                return;
+            }
+            if (noCount === 3 && moveCount >= 5) {
+                return;
+            }
+
+            const buttonRect = noBtnDodging.getBoundingClientRect();
+            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+            const distance = Math.hypot(mousePos.x - buttonCenterX, mousePos.y - buttonCenterY);
+
+            const currentOffset = isMobile ? 120 : 100;
+
+            if (distance < currentOffset) {
+                const now = Date.now();
+                // Throttle that allows state updates to complete (120ms desktop, 100ms mobile)
+                if (now - lastDodgeTime > (isMobile ? 100 : 120)) {
+                    lastDodgeTime = now;
+                    
+                    const btnWidth = buttonRect.width;
+                    const btnHeight = buttonRect.height;
+                    const maxX = window.innerWidth - btnWidth - 20;
+                    const maxY = window.innerHeight - btnHeight - 20;
+                    
+                    // Keep generating a new position until it's far enough from cursor
+                    let newX, newY, newDistance;
+                    let attempts = 0;
+                    do {
+                        newX = Math.random() * Math.max(0, maxX);
+                        newY = Math.random() * Math.max(0, maxY);
+                        newDistance = Math.hypot(mousePos.x - (newX + btnWidth / 2), mousePos.y - (newY + btnHeight / 2));
+                        attempts++;
+                    } while (newDistance < currentOffset + 50 && attempts < 10); // Add 50px buffer
+                    
+                    moveCount++;
+                    console.log(`🔄 DODGING! Move #${moveCount} | Distance: ${distance.toFixed(0)}px | New distance: ${newDistance.toFixed(0)}px`);
+                    
+                    noBtnDodging.style.position = 'fixed';
+                    noBtnDodging.style.left = newX + 'px';
+                    noBtnDodging.style.top = newY + 'px';
+                }
+            }
+
+            // Continue loop
+            requestAnimationFrame(dodgingLoop);
+        }
+
+        // Initialize
+        detectMobile();
+        updateNoButton();
+
+        // Protect footer from removal
+        function protectFooter() {
+            const footer = document.querySelector('.footer');
+            if (!footer) {
+                // Restore footer if removed
+                const newFooter = document.createElement('div');
+                newFooter.className = 'footer';
+                newFooter.innerHTML = '© 2025 · <a href="https://github.com/StevenX-SG" target="_blank">github.com/StevenX-SG</a>';
+                document.body.appendChild(newFooter);
+            }
+        }
+
+        // Check footer every 500ms
+        setInterval(protectFooter, 500);
+
+        // Also use MutationObserver for real-time monitoring
+        const observer = new MutationObserver(() => {
+            protectFooter();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
+</body>
+</html>
